@@ -42,6 +42,9 @@ void command_loop(LSMTree& tree) {
             // Trim quotes
             tree.load(file_path.substr(1, file_path.size() - 2));
             break;
+		case 's':
+            tree.printStats();
+            break;
         default:
             die("Invalid command.");
         }
@@ -52,7 +55,7 @@ int main(int argc, char *argv[]) {
     int opt, buffer_num_pages, buffer_max_entries, depth, fanout, num_threads;
     float bf_bits_per_entry;
 
-    buffer_num_pages = DEFAULT_BUFFER_NUM_PAGES;
+    buffer_num_pages = 2;
     depth = DEFAULT_TREE_DEPTH;
     fanout = DEFAULT_TREE_FANOUT;
     num_threads = DEFAULT_THREAD_COUNT;

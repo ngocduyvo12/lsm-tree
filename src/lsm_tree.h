@@ -26,4 +26,6 @@ public:
     void range(KEY_t, KEY_t);
     void del(KEY_t);
     void load(std::string);
+	void print_stats();
+    void printStats();
 };

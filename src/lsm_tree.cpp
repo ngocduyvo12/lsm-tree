@@ -103,10 +103,12 @@ void LSMTree::merge_down(vector<Level>::iterator current) {
 
 void LSMTree::put(KEY_t key, VAL_t val) {
     /*
-     * Try inserting the key into the buffer
-     */
+    * Insert the key into the buffer and check if the buffer is full
+    */
+    bool bufferFull = !buffer.put(key, val);
 
-    if (buffer.put(key, val)) {
+    // If the buffer is not full, return
+    if (!bufferFull) {
         return;
     }
 
@@ -296,9 +298,10 @@ void LSMTree::del(KEY_t key) {
 void LSMTree::load(string file_path) {
     ifstream stream;
     entry_t entry;
-
+	if (!file_path.empty() && file_path.back() == '"') {
+        file_path.pop_back();
+    }
     stream.open(file_path, ifstream::binary);
-
     if (stream.is_open()) {
         while (stream >> entry) {
             put(entry.key, entry.val);
@@ -306,4 +309,53 @@ void LSMTree::load(string file_path) {
     } else {
         die("Could not locate file '" + file_path + "'.");
     }
+}
+
+void LSMTree::printStats() {
+    int logicalPairs = 0;
+    cout << "Logical Pairs: ";
+    for (int levelIdx = 0; levelIdx < levels.size(); levelIdx++) {
+        Level& level = levels[levelIdx];
+        int levelKeyCount = 0;
+        for (const Run& run : level.runs) {
+            for (const entry_t& entry : run.entries) {
+                if (entry.val != VAL_TOMBSTONE) {
+                    levelKeyCount++;
+                    logicalPairs++;
+                }
+            }
+        }
+        cout << "LVL" << (levelIdx + 1) << ": " << levelKeyCount;
+        if (levelIdx < levels.size() - 1) {
+            cout << ", ";
+        } else {
+            cout << endl;
+        }
+    }
+    // Include buffer entries in the total logical pairs count
+    for (const entry_t& entry : buffer.entries) {
+        if (entry.val != VAL_TOMBSTONE) {
+            logicalPairs++;
+        }
+    }
+    cout << "Total Logical Pairs: " << logicalPairs << endl;
+
+    // Print the key, value, and level information
+    for (int levelIdx = 0; levelIdx < levels.size(); levelIdx++) {
+        Level& level = levels[levelIdx];
+        for (const Run& run : level.runs) {
+            for (const entry_t& entry : run.entries) {
+                if (entry.val != VAL_TOMBSTONE) {
+                    cout << entry.key << ":" << entry.val << ":L" << (levelIdx + 1) << " ";
+                }
+            }
+        }
+    }
+    // Print buffer entries
+    for (const entry_t& entry : buffer.entries) {
+        if (entry.val != VAL_TOMBSTONE) {
+            cout << entry.key << ":" << entry.val << ":Buffer ";
+        }
+    }
+    cout << endl;
 }

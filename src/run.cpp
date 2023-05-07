@@ -6,6 +6,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+#include "sys.h"
 #include "run.h"
 
 using namespace std;
@@ -20,7 +21,7 @@ Run::Run(long max_size, float bf_bits_per_entry) :
     fence_pointers.reserve(max_size / getpagesize());
 
     tmp_fn = strdup(TMP_FILE_PATTERN);
-    tmp_file = mktemp(tmp_fn);
+    tmp_file = mkstemp(tmp_fn);
 
     mapping = nullptr;
     mapping_fd = -1;
@@ -170,5 +171,11 @@ void Run::put(entry_t entry) {
     max_key = max(entry.key, max_key);
 
     mapping[size] = entry;
+
+    if (size >= max_size) {
+        die("Run is full.");
+    }
+
+    entries.push_back(entry);
     size++;
 }

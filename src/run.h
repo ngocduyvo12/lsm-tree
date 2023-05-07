@@ -27,4 +27,5 @@ public:
     VAL_t * get(KEY_t);
     vector<entry_t> * range(KEY_t, KEY_t);
     void put(entry_t);
+    vector<entry_t> entries;
 };
