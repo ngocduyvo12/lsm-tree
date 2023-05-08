@@ -1,7 +1,7 @@
 import struct
 
 # Open the input file in text mode
-with open('workload.txt', 'r') as f_in:
+with open('input_large.txt', 'r') as f_in:
 
     # Read the number-value pairs from the input file and convert them to hex
     lines = f_in.read().splitlines()
@@ -25,7 +25,7 @@ with open('workload.txt', 'r') as f_in:
         hex_values.append(hex_value)
 
 # Open the output file in binary mode and write the hex values to it
-with open('output_file.bin', 'wb') as f_out:
+with open('input_large.bin', 'wb') as f_out:
 
     # Write each hex value to every 4 bytes of the output file
     for hex_value in hex_values:

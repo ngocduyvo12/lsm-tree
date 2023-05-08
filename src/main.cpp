@@ -45,6 +45,16 @@ void command_loop(LSMTree& tree) {
 		case 's':
             tree.printStats();
             break;
+        case 'm':
+            cin.ignore();
+            getline(cin, file_path);
+            // Trim quotes
+            tree.put_metrics(file_path.substr(1, file_path.size() - 2));
+            break;
+        case 'n':
+            cin >> key_a >> key_b;
+            tree.range_metrics(key_a, key_b);
+            break;
         default:
             die("Invalid command.");
         }

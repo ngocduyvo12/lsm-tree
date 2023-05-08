@@ -28,4 +28,6 @@ public:
     void load(std::string);
 	void print_stats();
     void printStats();
+    void put_metrics(std::string);
+    void range_metrics(KEY_t, KEY_t);
 };
